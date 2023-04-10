@@ -4,7 +4,6 @@
 
 #define LOG() printf("%s\n", __func__)
 
-
 void init_lcd_pins(lcd *lcd)
 {
     LOG();
@@ -39,11 +38,47 @@ void init_lcd_members(lcd *lcd)
     lcd->data_pins = dataPins;
 }
 
+void set_4_lsb(lcd *lcd, uint8_t data)
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        if (data & _BV(i))
+            set_high(&lcd->data_pins.all[i]);
+        else
+            set_low(&lcd->data_pins.all[i]);
+    }
+}
+
+void set_4_msb(lcd *lcd, uint8_t data)
+{
+    set_4_lsb(lcd, data >> 4);
+}
+
+void write_command(lcd * lcd, uint8_t command)
+{
+    //1. write 4 msb, 2. write 4 lsb
+    LOG();
+    // command
+    set_low(&lcd->rs);
+    // write
+    set_low(&lcd->rw);
+    // 
+}
+
+void setup_4bit_mode(lcd *lcd)
+{
+    LOG();
+    // command
+    set_low(&lcd->rs);
+    // write
+    set_low(&lcd->rw);
+    // 0b0000
+}
+
 void init_lcd_device(lcd *lcd)
 {
     LOG();
-    //command
-    set_low(&lcd->rs);
+    setup_4bit_mode(lcd);
 }
 
 void init_lcd(lcd *lcd)
