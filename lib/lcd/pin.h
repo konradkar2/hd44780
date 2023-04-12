@@ -17,4 +17,7 @@ void set_in(digital_pin *pin);
 void set_high(digital_pin *pin);
 void set_low(digital_pin *pin);
 
+int is_high(digital_pin *pin);
+int is_low(digital_pin *pin);
+
 #endif

@@ -1,14 +1,12 @@
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr8-stub.h>
-#include "app_api.h"
 #include <avr/interrupt.h>
 #include <uartlib.h>
 #include <lcd.h>
 
 int main(void)
 {
-    _delay_ms(100);
+    _delay_ms(500);
     
     uart_init();
     stdout = &uart_output;
@@ -17,12 +15,16 @@ int main(void)
     printf("Start\n");
 
     lcd lcd;
-    init_lcd(&lcd);
+    lcd_init(&lcd);
+    lcd_write(&lcd, "testtesttesttest_test");
+    lcd_clear(&lcd);
+    lcd_move_cursor(&lcd, 5, 1);
+    lcd_write(&lcd, "dupa");
+    lcd_move_cursor(&lcd, 0, 0);
+    lcd_write(&lcd, "dupa");
+
     while (1)
     {
-        set_low(&lcd.data_pins.s.d6);
-        _delay_ms(500);
-        set_high(&lcd.data_pins.s.d6);
         _delay_ms(500);
     }
     return 0;
