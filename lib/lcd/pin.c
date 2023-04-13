@@ -26,6 +26,7 @@ int is_high(digital_pin *pin)
 {
     return *pin->value & pin->mask;
 }
+
 int is_low(digital_pin *pin)
 {
     return !is_high(pin);

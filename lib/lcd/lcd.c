@@ -27,7 +27,6 @@
 #define LCD_ACCOMPANY_DISPLAY_SHIFT _BV(0)
 #define LCD_DONT_ACCOMPANY_DISPLAY_SHIFT 0
 
-
 #define LCD_DDRAM_SET _BV(7)
 #define LCD_1LINE_ADDR 0x0
 #define LCD_2LINE_ADDR 0x40
@@ -50,10 +49,10 @@ static void lcd_init_members(lcd *lcd)
     digital_pin rs = {.dir = &DDRD, .value = &PORTD, .mask = _BV(PD2)};
     digital_pin rw = {.dir = &DDRD, .value = &PORTD, .mask = _BV(PD3)};
     digital_pin e = {.dir = &DDRD, .value = &PORTD, .mask = _BV(PD4)};
-    data_pins dataPins = {.s.db4 = {.dir = &DDRD, .value = &PORTD, .mask = 0x0 | _BV(PD5)},
-                          .s.db5 = {.dir = &DDRD, .value = &PORTD, .mask = 0x0 | _BV(PD6)},
-                          .s.db6 = {.dir = &DDRD, .value = &PORTD, .mask = 0x0 | _BV(PD7)},
-                          .s.db7 = {.dir = &DDRB, .value = &PORTB, .mask = 0x0 | _BV(PB0)}};
+    data_pins dataPins = {.s.db4 = {.dir = &DDRD, .value = &PORTD, .mask = _BV(PD5)},
+                          .s.db5 = {.dir = &DDRD, .value = &PORTD, .mask = _BV(PD6)},
+                          .s.db6 = {.dir = &DDRD, .value = &PORTD, .mask = _BV(PD7)},
+                          .s.db7 = {.dir = &DDRB, .value = &PORTB, .mask = _BV(PB0)}};
 
     lcd->rs = rs;
     lcd->rw = rw;
@@ -106,12 +105,13 @@ static void write_command(lcd *lcd, uint8_t command)
     _delay_us(100);
 }
 
-void lcd_write_char(lcd *lcd, char c)
+void lcd_write_char(lcd *lcd, const char c)
 {
-    lcd_write(lcd, &c, 1);
+    uint8_t arr[] = {c};
+    lcd_write(lcd, arr, 1);
 }
 
-void lcd_write(lcd *lcd, const uint8_t * data, size_t size)
+void lcd_write(lcd *lcd, const uint8_t *data, size_t size)
 {
     set_high(&lcd->rs);
     set_low(&lcd->rw);
@@ -123,23 +123,22 @@ void lcd_write(lcd *lcd, const uint8_t * data, size_t size)
     }
 }
 
-void lcd_move_cursor(lcd * lcd, int x, int y)
+void lcd_move_cursor(lcd *lcd, int x, int y)
 {
-    if(x > 16)
+    if (x > 15)
         x = 0;
-    if(y > 1)
+    if (y > 1)
         y = 0;
-    
-    uint8_t addr = x + (y == 0 ? LCD_1LINE_ADDR : LCD_2LINE_ADDR); 
+
+    uint8_t addr = x + (y == 0 ? LCD_1LINE_ADDR : LCD_2LINE_ADDR);
     write_command(lcd, LCD_DDRAM_SET + addr);
 }
 
-void lcd_clear(lcd * lcd)
+void lcd_clear(lcd *lcd)
 {
     write_command(lcd, LCD_CLEAR);
     _delay_ms(2);
 }
-
 
 void lcd_init_device(lcd *lcd)
 {

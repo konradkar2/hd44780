@@ -2,6 +2,7 @@
 #define LCD_H
 
 #include <pin.h>
+#include <string.h>
 
 union data_pins
 {
